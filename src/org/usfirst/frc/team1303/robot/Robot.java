@@ -16,6 +16,7 @@ package org.usfirst.frc.team1303.robot;
 import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.Spark;
+import edu.wpi.first.wpilibj.Relay;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.CameraServer;
 import edu.wpi.first.wpilibj.AnalogInput;
@@ -31,7 +32,7 @@ public class Robot extends IterativeRobot {
 	// Create all the Sparks
 	private Spark leftDrive;
 	private Spark rightDrive;
-	private Spark mechWhip;
+	private Relay mechWhip;
 	private Spark mechArm;
 	private Spark mechClaw;
 	private Spark mechWinch;
@@ -44,11 +45,11 @@ public class Robot extends IterativeRobot {
 	@Override
 	public void robotInit() {
 		// Define physical peripherals
-		joystickOne = new Joystick(0);
-		joystickTwo = new Joystick(1);
+		joystickOne = new Joystick(0);	// Driver controller
+		joystickTwo = new Joystick(1);	// Mechanism controller
 		leftDrive 	= new Spark(0);	// Spark 0 controls the left set of wheels
 		rightDrive 	= new Spark(1);	// Spark 1 controls the right set of wheels
-		mechWhip 	= new Spark(2);	// Spark 2 controls the releasing of the whip
+		mechWhip 	= new Relay(2);	// Spark 2 controls the releasing of the whip *CHANGE TO WHATEVER CONTROLS THE WHIP*
 		mechArm		= new Spark(3);	// Spark 3 controls the movement of the claw
 		mechWinch 	= new Spark(4);	// Spark 4 controls the pulling of the winch in one direction
 		mechClaw 	= new Spark(5);	// Spark 5 Controls the movement of the claw
@@ -74,9 +75,9 @@ public class Robot extends IterativeRobot {
 		// If on controller two both 'SELECT'(6) and 'START'(7) are pressed release the whip
 		if (joystickTwo.getRawButton(1) && joystickTwo.getRawButton(2)) {
 			// Release the whip, i.e. power the motor for 1 rotation
-			mechWhip.set(1);
+			mechWhip.set(Relay.Value.kOn);
 		} else {
-			mechWhip.set(0);
+			mechWhip.set(Relay.Value.kOff);
 		}
 		
 		//---CLAW CONTROL---//
