@@ -20,6 +20,7 @@ import edu.wpi.first.wpilibj.Relay;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.CameraServer;
 import edu.wpi.first.wpilibj.AnalogInput;
+import edu.wpi.first.wpilibj.DriverStation;
 
 public class Robot extends IterativeRobot {
 	// Init. physical peripherals
@@ -29,7 +30,7 @@ public class Robot extends IterativeRobot {
 	private Joystick joystickOne;
 	private Joystick joystickTwo;
 	
-	// Create all the Sparks
+	// Create all the mechanism instance variables
 	private Spark leftDrive;
 	private Spark rightDrive;
 	private Relay mechWhip;
@@ -38,10 +39,10 @@ public class Robot extends IterativeRobot {
 	private Spark mechWinch;
 	
 	// Create an encoder
-	private AnalogInput armEncoder = new AnalogInput(0);
+	private AnalogInput armEncoder;
 	/*Min = 1200; Max = 2100;*/
 
-	// Called when first started
+	/*---- ROBOT INITALIZER----*/
 	@Override
 	public void robotInit() {
 		// Define physical peripherals
@@ -61,10 +62,11 @@ public class Robot extends IterativeRobot {
 		CameraServer.getInstance().startAutomaticCapture();
 		
 		// Setup the encoder
+		armEncoder = new AnalogInput(0);
 		armEncoder.setGlobalSampleRate(62500);
 	}
 
-	// Teleop loop
+	/*---- TELEOP FUNCTIONS ----*/
 	@Override
 	public void teleopPeriodic() {
 		//---CHASSIS DRIVE---//
@@ -74,7 +76,7 @@ public class Robot extends IterativeRobot {
 		//---WHIP CONTROL---//
 		// If on controller two both 'SELECT'(6) and 'START'(7) are pressed release the whip
 		if (joystickTwo.getRawButton(1) && joystickTwo.getRawButton(2)) {
-			// Release the whip, i.e. power the motor for 1 rotation
+			// Release the whip
 			mechWhip.set(Relay.Value.kOn);
 		} else {
 			mechWhip.set(Relay.Value.kOff);
@@ -82,10 +84,11 @@ public class Robot extends IterativeRobot {
 		
 		//---CLAW CONTROL---//
 		// Controller the claw with button 'LeftBumper'(4) and 'RightBumber'(5)
-		if (joystickTwo.getRawButton(4))
+		if (joystickTwo.getRawButton(4)) {
 			mechClaw.set(-0.5);
-		if (joystickTwo.getRawButton(5))
+		} else if (joystickTwo.getRawButton(5)) {
 			mechClaw.set(0.5);
+		}
 		
 		//---ARM CONTROL---//
 		// Get the values from the encoder and use it to control the arm
@@ -99,10 +102,30 @@ public class Robot extends IterativeRobot {
 		
 		//---WINCH CONTROL---//
 		// If on controller one both 'SELECT'(6) and 'START'(7) are pressed winch the robot up
-		if (joystickOne.getRawButton(1) && joystickOne.getRawButton(2))
-		{ mechWinch.set(-0.5);}
-		else
-		{ mechWinch.set(0);}
+		if (joystickOne.getRawButton(1) && joystickOne.getRawButton(2)){ 
+			mechWinch.set(-0.5);
+		} else { 
+			mechWinch.set(0);
+		}
+	}
+	
+	/*---- AUTONOMOUS FUNCITONS ----*/
+	private DriverStation.Alliance color;	// Holds the alliance color
+	private int station;	// Holds the station
+	
+	
+	@Override
+	public void autonomousInit() {
+		// Get and set the team COLOR
+		color = DriverStation.getInstance().getAlliance();
+		
+		// Get and set the STATION number
+		station = DriverStation.getInstance().getLocation();
+	}
+	
+	@Override
+	public void autonomousPeriodic() {
+		
 	}
 	
 	/**
