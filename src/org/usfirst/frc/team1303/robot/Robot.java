@@ -13,6 +13,7 @@
 
 package org.usfirst.frc.team1303.robot;
 
+// FIRST imports
 import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.Spark;
@@ -21,6 +22,7 @@ import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.CameraServer;
 import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.Timer;
 
 public class Robot extends IterativeRobot {
 	// Init. physical peripherals
@@ -112,6 +114,7 @@ public class Robot extends IterativeRobot {
 	/*---- AUTONOMOUS FUNCITONS ----*/
 	private DriverStation.Alliance color;	// Holds the alliance color
 	private int station;	// Holds the station
+	private Timer timer;
 	
 	
 	@Override
@@ -121,10 +124,32 @@ public class Robot extends IterativeRobot {
 		
 		// Get and set the STATION number
 		station = DriverStation.getInstance().getLocation();
+		
+		// Setup the TIMER
+		timer.reset();
+		timer.start();
 	}
 	
 	@Override
 	public void autonomousPeriodic() {
+		
+		// For now we will do a simple drive from position
+		/*---- FAILSAFE ----*/
+		if (station == 1 || station == 3) {
+			// Drive forward for delay
+			if (timer.get() < 2.0) {
+				chassisDrive.tankDrive(1, 1);
+			} else {
+				// Set the motor power back to 0
+				chassisDrive.tankDrive(0, 0);
+			}
+		} else if (station == 2) {
+			
+		} else {
+			// Something went wrong with the station number
+			System.out.println("ERROR: INVALID STATION NUMBER " + station);
+		}
+		
 		
 	}
 	
