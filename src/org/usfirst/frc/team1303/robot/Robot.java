@@ -138,19 +138,34 @@ public class Robot extends IterativeRobot {
 		if (station == 1 || station == 3) {
 			// Drive forward for delay
 			if (timer.get() < 2.0) {
-				chassisDrive.tankDrive(1, 1);
+				chassisDrive.tankDrive(-1, -1);
 			} else {
 				// Set the motor power back to 0
 				chassisDrive.tankDrive(0, 0);
+				timer.stop();
 			}
 		} else if (station == 2) {
-			
+			if (timer.get() < 1.0) {
+				// Rotate Left/Right
+				chassisDrive.tankDrive(0.25, -0.25);
+			} else if (timer.get() < 3.0) {
+				// Drive forward for 2 seconds
+				chassisDrive.tankDrive(-1, -1);
+			} else if (timer.get() < 4.0) {
+				// Rotate Left/Right
+				chassisDrive.tankDrive(-0.25, 0.25);
+			} else if (timer.get() < 6.0) {
+				// Drive forward for 2 seconds
+				chassisDrive.tankDrive(-1, -1);
+			} else {
+				// Stop the robot
+				chassisDrive.tankDrive(0, 0);
+				timer.stop();
+			}
 		} else {
 			// Something went wrong with the station number
 			System.out.println("ERROR: INVALID STATION NUMBER " + station);
 		}
-		
-		
 	}
 	
 	/**
